@@ -58,16 +58,17 @@ java -jar target/jrebel-license-1.0-SNAPSHOT-jar-with-dependencies.jar -p 8081
 项目中已包含 `Dockerfile`，可以轻松构建和运行 Docker 容器。
 
 ```bash
-# 1. (如果需要) 使用 Maven 打包项目
-mvn package 
-
-# 2. 构建 Docker 镜像
+# 1. 进入项目根目录，构建 Docker 镜像
+#    (如果本地没有 Maven 环境，Docker 会在构建过程中处理所有事情)
 docker build -t jrebel-ls .
 
-# 3. 以后台模式运行容器
-# 这里将容器的 9001 端口映射到宿主机的 9001 端口
+# 2. 以后台模式启动容器
+#    -p 9001:9001 将容器的端口映射到主机的 9001 端口
+#    -e PORT=9001 设置容器内 Java 应用的运行端口为 9001，与映射保持一致
 docker run -d --name jrebel-ls --restart always -p 9001:9001 -e PORT=9001 jrebel-ls
 ```
+
+激活地址请使用你映射的主机端口，例如 `http://localhost:9001`。
 
 ## ⚙️ 激活配置
 
