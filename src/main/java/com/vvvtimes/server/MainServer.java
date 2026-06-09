@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +22,7 @@ public class MainServer extends AbstractHandler {
             throw new IllegalArgumentException("Error in argument's length ");
         }
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
 
         for (int i = 0, len = args.length; i < len;) {
             String argName = args[i++];
@@ -59,13 +58,13 @@ public class MainServer extends AbstractHandler {
         System.out.println("JRebel 7.1 and earlier version Activation address was: http://localhost:" + port
                 + "/{tokenname}, with any email.");
         System.out.println("JRebel 2018.1 and later version Activation address was: http://localhost:" + port
-                + "/{guid}(eg:http://localhost:" + port + "/" + UUID.randomUUID().toString() + "), with any email.");
+                + "/{guid}(eg:http://localhost:" + port + "/" + UUID.randomUUID() + "), with any email.");
 
         server.join();
     }
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException {
         System.out.println(target);
 
         if (target.equals("/")) {
@@ -270,7 +269,7 @@ public class MainServer extends AbstractHandler {
         html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>http://localhost:"
                 + port + "/{tokenname}</span>, with any email.";
         html += "<p>JRebel 2018.1 and later version Activation address was: http://localhost:" + port
-                + "/{guid}(eg:<span style='color:red'>http://localhost:" + port + "/" + UUID.randomUUID().toString()
+                + "/{guid}(eg:<span style='color:red'>http://localhost:" + port + "/" + UUID.randomUUID()
                 + "</span>), with any email.";
 
         response.getWriter().println(html);

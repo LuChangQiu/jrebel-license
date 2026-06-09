@@ -1,7 +1,7 @@
 package com.vvvtimes.JrebelUtil;
 import org.apache.commons.codec.binary.Base64;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 public class ByteUtil {
@@ -11,14 +11,14 @@ public class ByteUtil {
         if (binaryData == null) {
             return null;
         }
-        return new String(Base64.encodeBase64(binaryData), Charset.forName("UTF-8"));
+        return new String(Base64.encodeBase64(binaryData), StandardCharsets.UTF_8);
     }
 
     public static byte[] a(final String s) {
         if (s == null) {
             return null;
         }
-        return Base64.decodeBase64(s.getBytes(Charset.forName("UTF-8")));
+        return Base64.decodeBase64(s.getBytes(StandardCharsets.UTF_8));
     }
 
     public static byte[] a(final int n) {

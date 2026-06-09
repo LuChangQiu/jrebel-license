@@ -11,6 +11,8 @@
   <properties>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <native.maven.plugin.version>0.10.6</native.maven.plugin.version>
+    <imageName>jrebel-license</imageName>
   </properties>
 
   <build>
@@ -51,8 +53,44 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- GraalVM Native Image插件 mvn clean package -Pnative -->
+      <plugin>
+        <groupId>org.graalvm.buildtools</groupId>
+        <artifactId>native-maven-plugin</artifactId>
+        <version>${native.maven.plugin.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>build-native</id>
+            <goals>
+              <goal>compile-no-fork</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <imageName>${imageName}</imageName>
+          <mainClass>com.vvvtimes.server.MainServer</mainClass>
+          <buildArgs>
+            <buildArg>--no-fallback</buildArg>
+            <buildArg>--enable-http</buildArg>
+            <buildArg>--enable-https</buildArg>
+            <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+            <buildArg>--initialize-at-build-time=org.eclipse.jetty.util.log.Log,org.eclipse.jetty.util.log.Slf4jLog,org.eclipse.jetty.util.log.JavaUtilLog,org.eclipse.jetty.util.DateCache</buildArg>
+            <buildArg>--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG</buildArg>
+            <buildArg>--allow-incomplete-classpath</buildArg>
+            <buildArg>-H:ReflectionConfigurationFiles=src/main/resources/META-INF/native-image/reflect-config.json</buildArg>
+            <buildArg>-H:ResourceConfigurationFiles=src/main/resources/META-INF/native-image/resource-config.json</buildArg>
+            <buildArg>-H:JNIConfigurationFiles=src/main/resources/META-INF/native-image/jni-config.json</buildArg>
+            <buildArg>-H:DynamicProxyConfigurationFiles=src/main/resources/META-INF/native-image/proxy-config.json</buildArg>
+          </buildArgs>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
+
 
   <dependencies>
 
