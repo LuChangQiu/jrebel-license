@@ -120,45 +120,40 @@ public class MainServer extends AbstractHandler {
         server.setHandler(new MainServer());
         server.start();
 
-        logger.info("License Server started at http://localhost:{}", port);
-        logger.info("JetBrains Activation address was: http://localhost:{}/", port);
-        logger.info("JRebel 7.1 and earlier version Activation address was: http://localhost:{}/{{tokenname}}, with any email.", port);
-        logger.info("JRebel 2018.1 and later version Activation address was: http://localhost:{}/{})", port, UUID.randomUUID());
+        System.out.println("License Server started at http://localhost:" + port);
+        System.out.println("JetBrains Activation address was: http://localhost:" + port + "/");
+        System.out.println("JRebel 7.1 and earlier version Activation address was: http://localhost:" + port
+                + "/{tokenname}, with any email.");
+        System.out.println("JRebel 2018.1 and later version Activation address was: http://localhost:" + port
+                + "/{guid}(eg:http://localhost:" + port + "/" + UUID.randomUUID() + "), with any email.");
 
         server.join();
     }
 
-    @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("处理请求: {}", target);
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        System.out.println(target);
 
-        switch (target) {
-            case "/":
-                indexHandler(baseRequest, request, response);
-                break;
-            case "/jrebel/leases":
-            case "/agent/leases":
-                jrebelLeasesHandler(baseRequest, request, response);
-                break;
-            case "/jrebel/leases/1":
-            case "/agent/leases/1":
-                jrebelLeases1Handler(baseRequest, request, response);
-                break;
-            case "/jrebel/validate-connection":
-                jrebelValidateHandler(baseRequest, response);
-                break;
-            case "/rpc/ping.action":
-                pingHandler(baseRequest, request, response);
-                break;
-            case "/rpc/obtainTicket.action":
-                obtainTicketHandler(baseRequest, request, response);
-                break;
-            case "/rpc/releaseTicket.action":
-                releaseTicketHandler(baseRequest, request, response);
-                break;
-            default:
-                logger.warn("未知请求路径: {}", target);
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        if (target.equals("/")) {
+            indexHandler(target, baseRequest, request, response);
+        } else if (target.equals("/jrebel/leases")) {
+            jrebelLeasesHandler(target, baseRequest, request, response);
+        } else if (target.equals("/jrebel/leases/1")) {
+            jrebelLeases1Handler(target, baseRequest, request, response);
+        } else if (target.equals("/agent/leases")) {
+            jrebelLeasesHandler(target, baseRequest, request, response);
+        } else if (target.equals("/agent/leases/1")) {
+            jrebelLeases1Handler(target, baseRequest, request, response);
+        } else if (target.equals("/jrebel/validate-connection")) {
+            jrebelValidateHandler(target, baseRequest, request, response);
+        } else if (target.equals("/rpc/ping.action")) {
+            pingHandler(target, baseRequest, request, response);
+        } else if (target.equals("/rpc/obtainTicket.action")) {
+            obtainTicketHandler(target, baseRequest, request, response);
+        } else if (target.equals("/rpc/releaseTicket.action")) {
+            releaseTicketHandler(target, baseRequest, request, response);
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
     
@@ -360,30 +355,23 @@ public class MainServer extends AbstractHandler {
         }
     }
 
-    private void indexHandler(Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
-        try {
-            baseRequest.setHandled(true);
-            
-            int port = request.getServerPort();
-            String html = "<h1>Hello,This is a Jrebel & JetBrains License Server!</h1>" +
-                    "<p>License Server started at http://localhost:" + port +
-                    "<p>JetBrains Activation address was: <span style='color:red'>http://localhost:" + port + "/" +
-                    "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>http://localhost:" +
-                    port + "/{tokenname}</span>, with any email." +
-                    "<p>JRebel 2018.1 and later version Activation address was: http://localhost:" + port +
-                    "/{guid}(eg:<span style='color:red'>http://localhost:" + port + "/" +
-                    UUID.randomUUID() + "</span>), with any email.";
+    private void indexHandler(String target, Request baseRequest, HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        response.setContentType("text/html; charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        baseRequest.setHandled(true);
 
-            response.setContentType(CONTENT_TYPE_HTML);
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().print(html);
-            
-            logger.info("成功处理首页请求");
-            
-        } catch (Exception e) {
-            logger.error("处理首页请求时发生错误", e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            baseRequest.setHandled(true);
-        }
+        int port = request.getServerPort();
+        String html = "<h1>Hello,This is a Jrebel & JetBrains License Server!</h1>";
+        html += "<p>License Server started at http://localhost:" + port;
+        html += "<p>JetBrains Activation address was: <span style='color:red'>http://localhost:" + port + "/";
+        html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>http://localhost:"
+                + port + "/{tokenname}</span>, with any email.";
+        html += "<p>JRebel 2018.1 and later version Activation address was: http://localhost:" + port
+                + "/{guid}(eg:<span style='color:red'>http://localhost:" + port + "/" + UUID.randomUUID()
+                + "</span>), with any email.";
+
+        response.getWriter().println(html);
+
     }
 }

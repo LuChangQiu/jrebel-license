@@ -1,0 +1,1 @@
+java  -jar  jrebel-license-1.0-SNAPSHOT-jar-with-dependencies.jar
